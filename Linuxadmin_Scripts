@@ -1,0 +1,33 @@
+1. Usercreation.sh
+Script:
+
+#!/bin/bash
+# Script to create a new user and set password
+
+read -p "Enter new username: " username
+
+if id "$username" &>/dev/null; then
+    echo "User $username already exists!"
+else
+    useradd "$username"
+    echo "User $username created."
+    passwd "$username"
+    echo "Password set for $username."
+fi
+
+
+2. monitor_disk.sh
+Script:
+
+#!/bin/bash
+# Script to check disk usage and alert if > 80%
+
+THRESHOLD=80
+df -H | grep -vE '^Filesystem|tmpfs' | awk '{ print $5 " " $6 }' | while read output; do
+  usage=$(echo $output | awk '{ print $1}' | sed 's/%//g')
+  partition=$(echo $output | awk '{ print $2 }')
+  if [ $usage -ge $THRESHOLD ]; then
+    echo "Disk usage warning: $partition is at ${usage}%"
+  fi
+done
+ 
